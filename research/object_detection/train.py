@@ -80,14 +80,16 @@ flags.DEFINE_string('input_config_path', '',
                     'Path to an input_reader_pb2.InputReader config file.')
 flags.DEFINE_string('model_config_path', '',
                     'Path to a model_pb2.DetectionModel config file.')
+flags.DEFINE_float('gpu_percentage', 1.0,
+                     'Limits the max allocated memmory for the training process ')
 
 FLAGS = flags.FLAGS  
 
 
 def main(_):
-  gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.8)  # leave for eval
+  gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=FLAGS.gpu_percentage)
   sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
-  
+
   assert FLAGS.train_dir, '`train_dir` is missing.'
   if FLAGS.task == 0: tf.gfile.MakeDirs(FLAGS.train_dir)
   if FLAGS.pipeline_config_path:

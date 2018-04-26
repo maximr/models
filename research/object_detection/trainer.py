@@ -378,9 +378,11 @@ def train(create_tensor_dict_fn,
       available_var_map = (variables_helper.
                            get_variables_available_in_checkpoint(
                                var_map, train_config.fine_tune_checkpoint))
+
       init_saver = tf.train.Saver(available_var_map)
       def initializer_fn(sess):
-        init_saver.restore(sess, train_config.fine_tune_checkpoint)
+        with tf.Session(graph=graph) as sess:
+          init_saver.restore(sess, train_config.fine_tune_checkpoint)
       init_fn = initializer_fn
 
     slim.learning.train(
