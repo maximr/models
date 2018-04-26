@@ -82,6 +82,11 @@ celerybeat-schedule
 venv/
 ENV/
 
+#custom
+py_data/
+.DS_Store
+research/object_detection/protos/*.py
+
 # Spyder project settings
 .spyderproject
 
