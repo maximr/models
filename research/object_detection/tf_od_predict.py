@@ -66,36 +66,17 @@ def tf_od_pred():
          # Visualization of the results of a detection.
         vis_image = vis_util.visualize_boxes_and_labels_on_image_array(
                  image_np,
-                 np.squeeze(boxes),
-                 np.squeeze(classes).astype(np.int32),
-                 np.squeeze(scores),
+                 np.squeeze(boxes[0]),
+                 np.squeeze(classes[0]).astype(np.int32),
+                 np.squeeze(scores[0]),
                  category_index,
                  use_normalized_coordinates=True,
                  line_thickness=1)
         print("{} boxes in {} image tile!".format(len(boxes), image_path))
         print(scores)
-        print(classes)
         image_pil = Image.fromarray(np.uint8(vis_image)).convert('RGB')
         cv_im = np.uint8(vis_image)
         cv_im = cv2.cvtColor(cv_im, cv2.COLOR_RGB2BGR)
-        im_h, im_w = cv_im.shape[:-1]
-
-        for idx, box in enumerate(boxes[0]):
-          if scores[0][idx] > 0.2:
-            print(box)
-            print(scores[0][idx])
-
-            sx = int(round(box[1]*im_w))
-            sy = int(round(box[0]*im_h))
-            ex = int(round(box[3]*im_w))
-            ey = int(round(box[2]*im_h))
-
-            cv2.circle(cv_im,(sx,sy), 8, (0,255,0), -1)
-            cv2.circle(cv_im,(ex,ey), 8, (255,0,0), -1)
-
-            #xmin 0, xmax 1, ymin 2, ymax 3
-            #xmin,ymin, xmax, ymax
-            cv2.rectangle(cv_im,(sx,sy),(ex,ey),(0,0,255),2)
 
         cv2.imshow("img", cv_im)
         cv2.waitKey()

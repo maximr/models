@@ -80,7 +80,7 @@ flags.DEFINE_string('input_config_path', '',
                     'Path to an input_reader_pb2.InputReader config file.')
 flags.DEFINE_string('model_config_path', '',
                     'Path to a model_pb2.DetectionModel config file.')
-flags.DEFINE_float('gpu_percentage', 1.0,
+flags.DEFINE_float('gpu_percentage', 0.8,
                      'Limits the max allocated memmory for the training process ')
 
 FLAGS = flags.FLAGS  

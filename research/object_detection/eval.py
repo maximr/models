@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-r"""Evaluation executable for detection models.
+"""Evaluation executable for detection models.
 
 This executable is used to evaluate DetectionModels. There are two ways of
 configuring the eval job.
@@ -77,10 +77,16 @@ flags.DEFINE_string('model_config_path', '',
 flags.DEFINE_boolean('run_once', False, 'Option to only run a single pass of '
                      'evaluation. Overrides the `max_evals` parameter in the '
                      'provided config.')
+flags.DEFINE_float('gpu_percentage', 0.5,
+                     'Limits the max allocated memmory for the training process ')
+
 FLAGS = flags.FLAGS
 
 
 def main(unused_argv):
+  gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=FLAGS.gpu_percentage)
+  sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+
   assert FLAGS.checkpoint_dir, '`checkpoint_dir` is missing.'
   assert FLAGS.eval_dir, '`eval_dir` is missing.'
   tf.gfile.MakeDirs(FLAGS.eval_dir)
