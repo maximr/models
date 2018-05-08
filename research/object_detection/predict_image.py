@@ -20,11 +20,12 @@ from utils import label_map_util
 from utils import visualization_utils as vis_util
 
 flags = tf.app.flags
-flags.DEFINE_string('model_name', '', 'Path to frozen detection graph')
-flags.DEFINE_string('path_to_label', '', 'Path to label file')
+flags.DEFINE_string('model_path', '', 'Path to frozen detection graph')
+#flags.DEFINE_string('path_to_label', '', 'Path to label file')
 flags.DEFINE_string('test_image_path', '', 'Path to test imgs and output diractory')
 flags.DEFINE_string('image_name', '', 'Name of the image to check')
 flags.DEFINE_boolean('display_image', False, 'Display the image after detection')
+flags.DEFINE_float('min_score', 0.3, 'Min object detection score')
 FLAGS = flags.FLAGS
 
 def load_image_into_numpy_array(image):
@@ -46,10 +47,11 @@ def predict_single_image():
     print("Check path: ", FLAGS.test_image_path)
 
     while True:
-        image_name = input('Enter the image name: ')
+        image_name = input('Enter the image name :> ')
 
         if image_name == 'exit':
             print("shutting down the program...")
+            cv2.destroyAllWindows()
             return
 
         image_path = FLAGS.test_image_path + '/' + image_name
@@ -75,8 +77,10 @@ def predict_single_image():
                  np.squeeze(scores[0]),
                  category_index,
                  use_normalized_coordinates=True,
-                 line_thickness=1)
-        print("{} boxes in {} image tile!".format(len(boxes), image_name))
+                 line_thickness=1,
+                 min_score_thresh=.1)
+        print("{} boxes in {}.".format(len(boxes[0]), image_name))
+        print(scores[0])
 
         image_pil = Image.fromarray(np.uint8(vis_image)).convert('RGB')
         cv_im = np.uint8(vis_image)
@@ -86,7 +90,6 @@ def predict_single_image():
             print("displaying image...")
             cv2.imshow("img", cv_im)
             cv2.waitKey()
-            cv2.destroyAllWindows()
 
     # with tf.gfile.Open(image_path, 'w') as fid:
     #      image_pil.save(fid, 'PNG')
@@ -94,9 +97,9 @@ def predict_single_image():
 
 
 if __name__ =='__main__':
-    model_name = op.join(os.getcwd(), FLAGS.model_name)
-    path_to_ckpt = op.join(model_name,  'frozen_inference_graph.pb')
-    path_to_label = op.join(os.getcwd(), FLAGS.path_to_label)
+    model_path = op.join(os.getcwd(), (FLAGS.model_path + '/model'))
+    path_to_ckpt = op.join(model_path,  'frozen_inference_graph.pb')
+    path_to_label = op.join(FLAGS.model_path, 'labelmap.pbtxt')
     num_classes = 1
     #test_image_path = op.join(os.getcwd(), FLAGS.test_image_path)
     #check_img_path = glob.glob(test_image_path + "/" + FLAGS.image_name)
@@ -129,3 +132,4 @@ if __name__ =='__main__':
     print("Index: ", category_index)
 
     predict_single_image()
+    cv2.destroyAllWindows()
